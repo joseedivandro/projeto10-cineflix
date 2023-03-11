@@ -3,11 +3,11 @@ import styled from "styled-components"
 import axios from "axios"
 import { Link } from "react-router-dom"
 
-export default function HomePage() {
+export default function HomePage(filmeId, setFilmeId, ) {
     const [imagens, setImagens] = useState([])
 
     useEffect(() => {
-        const url = "https://mock-api.driven.com.br/api/v8/cineflex/movies"
+        const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies`
         const promise = axios.get(url)
         promise.then((res) => {
             setImagens(res.data)
@@ -18,9 +18,17 @@ export default function HomePage() {
         promise.catch((err) => {
 
             console.log(err.data)
+            
+
         })
     }, [])
 
+
+
+    function idDoFIlme (id){
+        filmeId=id;
+        setFilmeId(filmeId)
+    }
     
     return (
 
@@ -29,11 +37,14 @@ export default function HomePage() {
             Selecione o filme
 
             <ListContainer>
-                {imagens.map((img) => (   
-                    <MovieContainer>
-                        <img src={img.posterURL} alt={img.title}/>
+                {imagens.map((img, index) => (   
+                    <div key={index}>
+                    <MovieContainer >
+                        <Link to = {`/sessoes/${img.id}`}>
+                        <img src={img.posterURL} alt={img.title} onClick= {(()=>{idDoFIlme(img.id)})} />
+                        </Link>
                     </MovieContainer>
-                    
+                    </div>  
                 ))}
             </ListContainer>
 

@@ -1,47 +1,58 @@
-import styled from "styled-components"
+import styled from "styled-components";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 export default function SessionsPage() {
+  const [sessao, setSessao] = useState([]);
+  const { idFilme } = useParams();
 
+  useEffect(() => {
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
+    const promise = axios.get(url);
+
+    promise.then((res) => {
+      setSessao(res.data);
+      console.log(sessao);
+    });
+
+    promise.catch((err) => {
+      console.log(err.data.days);
+    });
+  }, []);
+
+  if (sessao?.length === 0) {
+    return <div>Carregando...</div>;
+  }
+
+ 
     return (
-        <PageContainer>
-            Selecione o horário
-            <div>
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
+      <PageContainer>
+        <p>Selecione o horário</p>
+        <SessionContainer>
+          {sessao.days.map((sessao, index) => (
+            <div key={index}>
+              <p>{sessao.weekday}</p>
+              <ButtonsContainer>
+                <button>14:00</button>
+                <button>15:00</button>
+              </ButtonsContainer>
             </div>
-
-            <FooterContainer>
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                </div>
-            </FooterContainer>
-
-        </PageContainer>
-    )
+          ))}
+        </SessionContainer>
+       
+          <FooterContainer>
+            <div>
+              <img src={sessao.posterURL} alt="poster" />
+            </div>
+            <div>
+              <p>{sessao.title}</p>
+            </div>
+          </FooterContainer>
+        
+      </PageContainer>
+    );
+  
 }
 
 const PageContainer = styled.div`
