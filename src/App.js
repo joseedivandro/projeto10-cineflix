@@ -11,6 +11,10 @@ export default function App() {
 
     const [sessao, setSessao] = useState("")
     const [sessaoSeat, setSessaoSeat] = useState([])
+    const [buyerCPF, setBuyerCPF] = useState("");
+    const [order, setOrder] = useState();
+    const [sessionId, setSessionId] = useState(false);
+    
 
     return (
         <>
@@ -24,16 +28,20 @@ export default function App() {
                         sessao={sessao}
                         setSessao={setSessao}
                     />} />
-                    <Route path="/assentos/:idSessao" 
-                    element={<SeatsPage
-                        sessaoSeat={sessaoSeat}
-                        setSessaoSeat={setSessaoSeat}
+                    <Route path="/assentos/:idSessao"
+                        element={<SeatsPage
+                            sessaoSeat={sessaoSeat}
+                            setSessaoSeat={setSessaoSeat}
+                            setBuyerCPF={setBuyerCPF}
+                            setOrder = {setOrder}
 
 
-                    />}/>
-                    
+
+                        />} />
+
                     <Route path="/sucesso" element={<SuccessPage
-
+                        order = {order} 
+                        sessionId = {sessionId}
 
                     />} />
                 </Routes>

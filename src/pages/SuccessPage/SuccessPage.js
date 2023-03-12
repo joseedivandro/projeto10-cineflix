@@ -1,31 +1,55 @@
 import styled from "styled-components"
+import { Link } from "react-router-dom"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
-export default function SuccessPage() {
+
+
+export default function SuccessPage({ order}) {
+
+    const [success, setSuccess] = useState(false);
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`;
+    useEffect(() => {
+        axios
+            .post(url, order?.reserved) // adiciona optional chaining para a propriedade "reserved"
+            .then(() => setSuccess(true))
+            .catch(() => setSuccess(false));
+
+        
+    }, [])
 
     return (
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>
 
-            <TextContainer>
+            <TextContainer data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
-                <p>Tudo em todo lugar ao mesmo tempo</p>
-                <p>03/03/2023 - 14:00</p>
+                <p>{order?.title}</p> // adiciona optional chaining para a propriedade "title"
+                <p>{`${order?.sessionData} - ${order?.sessionTime}`}</p> // adiciona optional chaining para as propriedades "sessionData" e "sessionTime"
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer data-test="seats-info">
                 <strong><p>Ingressos</p></strong>
-                <p>Assento 01</p>
-                <p>Assento 02</p>
-                <p>Assento 03</p>
+                {order?.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)} // adiciona optional chaining para a propriedade "seatsNumber"
             </TextContainer>
 
             <TextContainer>
-                <strong><p>Comprador</p></strong>
-                <p>Nome: Letícia Chijo</p>
-                <p>CPF: 123.456.789-10</p>
+                {order?.reserved?.compradores.map(({ nome, cpf }) => { // adiciona optional chaining para a propriedade "reserved"
+
+                    return (
+                        <div data-test="client-info" key={cpf}>
+                            <p>Nome: {nome}</p>
+                            <p>CPF: {cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}</p>
+                        </div>
+                    )
+                })}
             </TextContainer>
 
-            <button>Voltar para Home</button>
+
+
+            <Link to="/">
+                <button data-test="go-home-btn">Voltar para Home</button>
+            </Link>
         </PageContainer>
     )
 }

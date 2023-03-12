@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDoFilme, setPegaIdDaSessao}) {
+export default function SessionsPage({}) {
   const [sessao, setSessao] = useState([]);
   const { idFilme } = useParams();
 
