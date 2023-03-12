@@ -165,7 +165,7 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
                         <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
                     </FormContainer>
 
-                    <FooterContainer>
+                    <FooterContainer data-test="footer">
                         <div>
                             <img src={sessaoSeat.movie?.posterURL} alt="poster" />
                         </div>

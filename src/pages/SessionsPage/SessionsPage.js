@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({ }) {
+export default function SessionsPage({setIdFilme }) {
   const [sessao, setSessao] = useState([]);
   const { idFilme } = useParams();
 
@@ -17,6 +17,7 @@ export default function SessionsPage({ }) {
 
     promise.then((res) => {
       setSessao(res.data);
+      setIdFilme(idFilme);
     });
 
     promise.catch((err) => {
@@ -41,15 +42,13 @@ export default function SessionsPage({ }) {
         <PageContainer>
           <p>Selecione o horário</p>
           <SessionContainer data-test="movie-day">
-            {sessao.days.map((time, index) => (
+            {sessao.days && sessao.days.map((time, index) => (
               <div key={index}>
                 {time.weekday} - {time.date}
-                {time.showtimes.map((showtime) => (
-                  <ButtonsContainer key={showtime.id}>
-                    <Link to={`/assentos/${showtime.id}`}>
-                      <button  data-test="showtime">
-                        {showtime.name}
-                      </button>
+                {time.showtimes.map((showtimes) => (
+                  <ButtonsContainer key={showtimes.id}>
+                    <Link to={`/assentos/${showtimes.id}`}>
+                      <button data-test="showtime">{showtimes.name}</button>
                     </Link>
                   </ButtonsContainer>
                 ))}

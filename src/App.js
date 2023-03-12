@@ -14,6 +14,7 @@ export default function App() {
     const [buyerCPF, setBuyerCPF] = useState("");
     const [order, setOrder] = useState();
     const [sessionId, setSessionId] = useState(false);
+    const [idFilme, setIdFilme] = useState(false);
     
 
     return (
@@ -25,6 +26,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={< HomePage />} />
                     <Route path="/sessoes/:idFilme" element={<SessionsPage
+                    setIdFilme = {setIdFilme}
                         sessao={sessao}
                         setSessao={setSessao}
                     />} />
@@ -34,6 +36,7 @@ export default function App() {
                             setSessaoSeat={setSessaoSeat}
                             setBuyerCPF={setBuyerCPF}
                             setOrder = {setOrder}
+                            idFilme = {idFilme}
 
 
 
