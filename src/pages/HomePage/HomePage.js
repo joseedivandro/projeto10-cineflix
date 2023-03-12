@@ -3,14 +3,21 @@ import styled from "styled-components"
 import axios from "axios"
 import { Link } from "react-router-dom"
 
-export default function HomePage({filmeId, setFilmeId }) {
-    const [imagens, setImagens] = useState([])
+export default function HomePage({ filmeId, setFilmeId }) {
+
+    const [listaDeFIlmes, setListaDeFilmes] = useState([])
+    const filmeEscolhido = !(listaDeFIlmes[0] === undefined)
+
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies`
+    const promise = axios.get(url)
 
     useEffect(() => {
-        const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies`
-        const promise = axios.get(url)
+
+
+
+
         promise.then((res) => {
-            setImagens(res.data)
+            setListaDeFilmes(res.data)
             console.log(res.data)
 
         })
@@ -18,37 +25,41 @@ export default function HomePage({filmeId, setFilmeId }) {
         promise.catch((err) => {
 
             console.log(err.data)
-            
+
 
         })
     }, [])
 
 
 
-    function idDoFilme (id){
-        filmeId=id;
-        setFilmeId(filmeId)
-    }
-    
+
+
     return (
 
         <>
-        <PageContainer>
-            Selecione o filme
 
-            <ListContainer>
-                {imagens.map((img, index) => (   
-                    <div key={index}>
-                    <MovieContainer >
-                        <Link to = {`/sessoes/${img.id}`}>
-                        <img src={img.posterURL} alt={img.title} onClick= {(()=>{idDoFilme(img.id)})} />
-                        </Link>
-                    </MovieContainer>
-                    </div>  
-                ))}
-            </ListContainer>
 
-        </PageContainer>
+            {filmeEscolhido ? (
+                <PageContainer>
+                    Selecione o filme
+
+                    <ListContainer>
+                        {listaDeFIlmes.map((img, index) => (
+                            <div key={index}>
+                                <MovieContainer >
+                                    <Link to={`/sessoes/${img.id}`}>
+                                        <img src={img.posterURL} alt={img.title} />
+                                    </Link>
+                                </MovieContainer>
+                            </div>
+                        ))}
+                    </ListContainer>
+
+                </PageContainer>
+
+            ) : (
+                <div> <p>A CARREGAR </p></div>
+            )}
         </>
     )
 }
