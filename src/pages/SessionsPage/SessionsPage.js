@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({}) {
+export default function SessionsPage({ }) {
   const [sessao, setSessao] = useState([]);
   const { idFilme } = useParams();
 
@@ -13,7 +13,7 @@ export default function SessionsPage({}) {
 
 
   useEffect(() => {
-   
+
 
     promise.then((res) => {
       setSessao(res.data);
@@ -24,52 +24,52 @@ export default function SessionsPage({}) {
     });
   }, []);
 
- 
+
 
   if (sessao.days !== undefined) {
     filmeSelecionado = true;
-} else {
-   filmeSelecionado= false;
-}
+  } else {
+    filmeSelecionado = false;
+  }
 
- 
+
 
   return (
 
     <>
-    {filmeSelecionado ? (
-    <PageContainer>
-      <p>Selecione o horário</p>
-      <SessionContainer>
-        {sessao.days.map((time, index) => (
-          <div key={index}>
-            {time.weekday} - {time.date}
-            {time.showtimes.map((showtime) => (
-              <ButtonsContainer key={showtime.id}>
-                <Link to={`/assentos/${showtime.id}`}>
-                  <button >
-                    {showtime.name}
-                  </button>
-                </Link>
-              </ButtonsContainer>
+      {filmeSelecionado ? (
+        <PageContainer>
+          <p>Selecione o horário</p>
+          <SessionContainer data-test="movie-day">
+            {sessao.days.map((time, index) => (
+              <div key={index}>
+                {time.weekday} - {time.date}
+                {time.showtimes.map((showtime) => (
+                  <ButtonsContainer key={showtime.id}>
+                    <Link to={`/assentos/${showtime.id}`}>
+                      <button  data-test="showtime">
+                        {showtime.name}
+                      </button>
+                    </Link>
+                  </ButtonsContainer>
+                ))}
+              </div>
             ))}
-          </div>
-        ))}
-      </SessionContainer>
+          </SessionContainer>
 
-      <FooterContainer data-test="footer">
-        <div>
-          <img src={sessao.posterURL} alt="poster" />
-        </div>
-        <div>
-          <p>{sessao.title}</p>
-        </div>
-      </FooterContainer>
-    </PageContainer>
-    ) : (
-      <div><p> A CARREGAR</p></div>
-  )}
-  </>
+          <FooterContainer data-test="footer">
+            <div>
+              <img src={sessao.posterURL} alt="poster" />
+            </div>
+            <div>
+              <p>{sessao.title}</p>
+            </div>
+          </FooterContainer>
+        </PageContainer>
+      ) : (
+        <div><p> A CARREGAR</p></div>
+      )}
+    </>
   )
 }
 
