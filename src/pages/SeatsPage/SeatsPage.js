@@ -1,31 +1,46 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components"
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
-export default function SeatsPage() {
+
+export default function SeatsPage({ filmeId, sessao, setSessao }) {
+    
+    const { idSessao} = useParams()
+
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
+
+    useEffect(() => {
+        axios.get(url)
+            .then(res => {
+                setSessao(res.data)
+                console.log(res.data)
+
+            })
+            .catch(err => {
+                console.error(err)
+            })
+    }, [])
+
+
+    if (sessao === undefined) {
+        return <div>Carregando....</div>
+    }
+
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+
+
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
                     <CaptionCircle />
                     Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
@@ -41,11 +56,11 @@ export default function SeatsPage() {
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={sessao.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{sessao.movie.title}</p>
+                    <p>{sessao.movie.weekday}</p>
                 </div>
             </FooterContainer>
 

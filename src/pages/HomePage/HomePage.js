@@ -3,7 +3,7 @@ import styled from "styled-components"
 import axios from "axios"
 import { Link } from "react-router-dom"
 
-export default function HomePage(filmeId, setFilmeId, ) {
+export default function HomePage({filmeId, setFilmeId }) {
     const [imagens, setImagens] = useState([])
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function HomePage(filmeId, setFilmeId, ) {
 
 
 
-    function idDoFIlme (id){
+    function idDoFilme (id){
         filmeId=id;
         setFilmeId(filmeId)
     }
@@ -41,7 +41,7 @@ export default function HomePage(filmeId, setFilmeId, ) {
                     <div key={index}>
                     <MovieContainer >
                         <Link to = {`/sessoes/${img.id}`}>
-                        <img src={img.posterURL} alt={img.title} onClick= {(()=>{idDoFIlme(img.id)})} />
+                        <img src={img.posterURL} alt={img.title} onClick= {(()=>{idDoFilme(img.id)})} />
                         </Link>
                     </MovieContainer>
                     </div>  

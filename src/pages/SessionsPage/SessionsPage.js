@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage() {
+export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDoFilme, setPegaIdDaSessao}) {
   const [sessao, setSessao] = useState([]);
   const { idFilme } = useParams();
 
@@ -13,46 +13,56 @@ export default function SessionsPage() {
 
     promise.then((res) => {
       setSessao(res.data);
-      console.log(sessao);
     });
 
     promise.catch((err) => {
-      console.log(err.data.days);
+      console.log(err);
     });
   }, []);
+
+  function passaDadosSessaoEscolhida(id, time, date) {
+  setPegaIdDoFilme(id);
+   setPegaIdDaSessao({
+      nomeDoFilme: sessao.title,
+      data: date,
+      hora: time,
+    });
+  }
 
   if (sessao?.length === 0) {
     return <div>Carregando...</div>;
   }
 
- 
-    return (
-      <PageContainer>
-        <p>Selecione o horário</p>
-        <SessionContainer>
-          {sessao.days.map((sessao, index) => (
-            <div key={index}>
-              <p>{sessao.weekday}</p>
-              <ButtonsContainer>
-                <button>14:00</button>
-                <button>15:00</button>
+  return (
+    <PageContainer>
+      <p>Selecione o horário</p>
+      <SessionContainer>
+        {sessao.days.map((time, index) => (
+          <div key={index}>
+            {time.weekday} - {time.date}
+            {time.showtimes.map((showtime) => (
+              <ButtonsContainer key={showtime.id}>
+                <Link to={`/assentos/${showtime.id}`}>
+                  <button onClick={() => passaDadosSessaoEscolhida(showtime.id, showtime.name, time.date)}>
+                    {showtime.name}
+                  </button>
+                </Link>
               </ButtonsContainer>
-            </div>
-          ))}
-        </SessionContainer>
-       
-          <FooterContainer>
-            <div>
-              <img src={sessao.posterURL} alt="poster" />
-            </div>
-            <div>
-              <p>{sessao.title}</p>
-            </div>
-          </FooterContainer>
-        
-      </PageContainer>
-    );
-  
+            ))}
+          </div>
+        ))}
+      </SessionContainer>
+
+      <FooterContainer>
+        <div>
+          <img src={sessao.posterURL} alt="poster" />
+        </div>
+        <div>
+          <p>{sessao.title}</p>
+        </div>
+      </FooterContainer>
+    </PageContainer>
+  );
 }
 
 const PageContainer = styled.div`
@@ -65,6 +75,7 @@ const PageContainer = styled.div`
     margin-top: 30px;
     padding-bottom: 120px;
     padding-top: 70px;
+    align-items:center;
     div {
         margin-top: 20px;
     }

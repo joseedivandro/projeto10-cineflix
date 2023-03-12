@@ -10,19 +10,42 @@ import SuccessPage from "./pages/SuccessPage/SuccessPage"
 export default function App() {
 
     const [filmeId, setFilmeId] = useState("")
+    const [pegaIdDaSessao , setPegaIdDaSessao]= useState({nomeFilme:"", data:"", hora:""})
+    const [pegaIdDoFilme, setPegaIdDoFilme] = useState("")
+    const [filmId , setFilmId] = useState ("")
+    const [sessao, setSessao] = useState("")
 
     return (
         <>
             <BrowserRouter>
                 <NavContainer>CINEFLEX</NavContainer>
                 <Routes> 
-                <Route path="/" element={< HomePage/>}
+                <Route path="/" element={< HomePage filmeId={filmeId}
+                setFilmeId={setFilmeId}
+                filmId = {filmId}
+                setFilmId= {setFilmId}
+            
+                />}/>
+                <Route path="/sessoes/:idFilme" element={<SessionsPage
+                  setPegaIdDaSessao={setPegaIdDaSessao}
+                  setPegaIdDoFilme={setPegaIdDoFilme}
+                
+                />}/>
+                <Route path="/assentos/:idSessao" element={<SeatsPage
+                filmId ={filmId} 
                 filmeId={filmeId}
                 setFilmeId={setFilmeId}
+                sessao={sessao}
+                setSessao={setSessao}
+                
+                />}
+                
+                
                 />
-                <Route path="/sessoes/:idFilme" element={<SessionsPage/>}/>
-                <Route path="/assentos" element={<SeatsPage/>}/>
-                <Route path="/sucesso" element={<SuccessPage/>}/>
+                <Route path="/sucesso" element={<SuccessPage
+                
+                
+                />}/>
                 </Routes>
             </BrowserRouter>
         </>
