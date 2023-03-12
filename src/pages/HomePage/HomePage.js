@@ -30,15 +30,8 @@ export default function HomePage({ filmeId, setFilmeId }) {
         })
     }, [])
 
-
-
-
-
     return (
-
         <>
-
-
             {filmeEscolhido ? (
                 <PageContainer>
                     Selecione o filme
@@ -46,7 +39,7 @@ export default function HomePage({ filmeId, setFilmeId }) {
                     <ListContainer>
                         {listaDeFIlmes.map((img, index) => (
                             <div key={index}>
-                                <MovieContainer >
+                                <MovieContainer  data-test="movie">
                                     <Link to={`/sessoes/${img.id}`}>
                                         <img src={img.posterURL} alt={img.title} />
                                     </Link>

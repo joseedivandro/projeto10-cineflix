@@ -57,7 +57,7 @@ export default function SessionsPage({}) {
         ))}
       </SessionContainer>
 
-      <FooterContainer>
+      <FooterContainer data-test="footer">
         <div>
           <img src={sessao.posterURL} alt="poster" />
         </div>
