@@ -4,16 +4,17 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 
-export default function SeatsPage({ filmeId, sessao, setSessao }) {
-    
-    const { idSessao} = useParams()
+export default function SeatsPage({ filmeId, sessaoSeat, setSessaoSeat }) {
+
+    const { idSessao } = useParams()
+    let filmeSelecionado = false;
 
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
     useEffect(() => {
         axios.get(url)
             .then(res => {
-                setSessao(res.data)
+                setSessaoSeat(res.data)
                 console.log(res.data)
 
             })
@@ -23,48 +24,64 @@ export default function SeatsPage({ filmeId, sessao, setSessao }) {
     }, [])
 
 
-    if (sessao === undefined) {
-        return <div>Carregando....</div>
+    if (sessaoSeat !== undefined) {
+        filmeSelecionado = true;
+    } else {
+        filmeSelecionado = false;
     }
 
 
     return (
-        <PageContainer>
-            Selecione o(s) assento(s)
 
-            <SeatsContainer>
+        <>
+            {filmeSelecionado ? (
+                <PageContainer>
+                    <p>Selecione o(s) assento(s)</p>
 
+                    <SeatsContainer>
+                        {sessaoSeat && sessaoSeat.seats && sessaoSeat.seats.map(seat => (
+                            <CaptionCircle 
+                                key={seat.id}
+                                seat={seat}
 
-            </SeatsContainer>
+                        
+                           />
+                           ))}
+                    </SeatsContainer>
 
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle />
-                    Selecionado
-                </CaptionItem>
-            </CaptionContainer>
+                    <CaptionContainer>
+                        <CaptionItem>
+                            <CaptionCircle />
+                            Selecionado
+                        </CaptionItem>
+                    </CaptionContainer>
 
-            <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                    <FormContainer>
+                        Nome do Comprador:
+                        <input placeholder="Digite seu nome..." />
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                        CPF do Comprador:
+                        <input placeholder="Digite seu CPF..." />
 
-                <button>Reservar Assento(s)</button>
-            </FormContainer>
+                        <button>Reservar Assento(s)</button>
+                    </FormContainer>
 
-            <FooterContainer>
-                <div>
-                    <img src={sessao.movie.posterURL} alt="poster" />
-                </div>
-                <div>
-                    <p>{sessao.movie.title}</p>
-                    <p>{sessao.movie.weekday}</p>
-                </div>
-            </FooterContainer>
+                    <FooterContainer>
+                        <div>
+                            <img src={sessaoSeat.movie?.posterURL} alt="poster" />
+                        </div>
+                        <div>
+                            <p>{sessaoSeat.movie?.title}</p>
+                            <p>{sessaoSeat.day?.weekday } - {sessaoSeat?.name} </p>
+                        </div>
+                    </FooterContainer>
 
-        </PageContainer>
+                </PageContainer>
+
+            ) : (
+                <div><p> A CARREGAR</p></div>
+            )}
+        </>
     )
 }
 

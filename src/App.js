@@ -9,40 +9,37 @@ import SuccessPage from "./pages/SuccessPage/SuccessPage"
 
 export default function App() {
 
-    const [filmeId, setFilmeId] = useState("")
-    const [pegaIdDaSessao , setPegaIdDaSessao]= useState({nomeFilme:"", data:"", hora:""})
-    const [pegaIdDoFilme, setPegaIdDoFilme] = useState("")
-    const [filmId , setFilmId] = useState ("")
     const [sessao, setSessao] = useState("")
+    const [sessaoSeat, setSessaoSeat] = useState([])
 
     return (
         <>
+
+
             <BrowserRouter>
                 <NavContainer>CINEFLEX</NavContainer>
-                <Routes> 
-                <Route path="/" element={< HomePage />}/>
-                <Route path="/sessoes/:idFilme" element={<SessionsPage
-                  setPegaIdDaSessao={setPegaIdDaSessao}
-                  setPegaIdDoFilme={setPegaIdDoFilme}
-                
-                />}/>
-                <Route path="/assentos/:idSessao" element={<SeatsPage
-                filmId ={filmId} 
-                filmeId={filmeId}
-                setFilmeId={setFilmeId}
-                sessao={sessao}
-                setSessao={setSessao}
-                
-                />}
-                
-                
-                />
-                <Route path="/sucesso" element={<SuccessPage
-                
-                
-                />}/>
+                <Routes>
+                    <Route path="/" element={< HomePage />} />
+                    <Route path="/sessoes/:idFilme" element={<SessionsPage
+                        sessao={sessao}
+                        setSessao={setSessao}
+                    />} />
+                    <Route path="/assentos/:idSessao" 
+                    element={<SeatsPage
+                        sessaoSeat={sessaoSeat}
+                        setSessaoSeat={setSessaoSeat}
+
+
+                    />}/>
+                    
+                    <Route path="/sucesso" element={<SuccessPage
+
+
+                    />} />
                 </Routes>
             </BrowserRouter>
+
+
         </>
     )
 }

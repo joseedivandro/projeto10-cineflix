@@ -7,9 +7,13 @@ export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDo
   const [sessao, setSessao] = useState([]);
   const { idFilme } = useParams();
 
+  const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
+  const promise = axios.get(url);
+  let filmeSelecionado = false;
+
+
   useEffect(() => {
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
-    const promise = axios.get(url);
+   
 
     promise.then((res) => {
       setSessao(res.data);
@@ -20,20 +24,20 @@ export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDo
     });
   }, []);
 
-  function passaDadosSessaoEscolhida(id, time, date) {
-  setPegaIdDoFilme(id);
-   setPegaIdDaSessao({
-      nomeDoFilme: sessao.title,
-      data: date,
-      hora: time,
-    });
-  }
+ 
 
-  if (sessao?.length === 0) {
-    return <div>Carregando...</div>;
-  }
+  if (sessao.days !== undefined) {
+    filmeSelecionado = true;
+} else {
+   filmeSelecionado= false;
+}
+
+ 
 
   return (
+
+    <>
+    {filmeSelecionado ? (
     <PageContainer>
       <p>Selecione o horário</p>
       <SessionContainer>
@@ -43,7 +47,7 @@ export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDo
             {time.showtimes.map((showtime) => (
               <ButtonsContainer key={showtime.id}>
                 <Link to={`/assentos/${showtime.id}`}>
-                  <button onClick={() => passaDadosSessaoEscolhida(showtime.id, showtime.name, time.date)}>
+                  <button >
                     {showtime.name}
                   </button>
                 </Link>
@@ -62,7 +66,11 @@ export default function SessionsPage({pegaIdDaSessao, pegaIdDoFilme, setPegaIdDo
         </div>
       </FooterContainer>
     </PageContainer>
-  );
+    ) : (
+      <div><p> A CARREGAR</p></div>
+  )}
+  </>
+  )
 }
 
 const PageContainer = styled.div`
