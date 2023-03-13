@@ -3,6 +3,7 @@ import styled from "styled-components"
 import axios from "axios"
 import { useParams, useNavigate } from "react-router-dom"
 import InputMask from 'react-input-mask';
+import removeAccents from 'remove-accents';
 
 
 
@@ -18,10 +19,10 @@ export default function SeatsPage({ filmId, setUserData, ingressos, setIngressos
 
 
     const items = [
-        { color: "#1AAE9E", border: "#0E7D71", label: "Selecionado" },
-        { color: "#C3CFD9", border: "#808F9D", label: "Disponível" },
-        { color: "#FBE192", border: "#F7C52B", label: "Indisponível" }
-    ];
+        {color: "#1AAE9E", border: "#0E7D71", label: "Selecionado" },
+        {color: "#C3CFD9", border: "#808F9D", label: "Disponível" },
+        {color: "#FBE192", border: "#F7C52B", label: "Indisponível" }
+        ];
     const navigate = useNavigate();
 
     let userReserve = {
@@ -31,42 +32,7 @@ export default function SeatsPage({ filmId, setUserData, ingressos, setIngressos
     }
 
 
-    const ClientNameInput = ({ value, onChange }) => (
-        <>
-          <Title htmlFor="name">Nome do Comprador: </Title>
-          <input
-            id="name"
-            data-test="client-name"
-            type="text"
-            placeholder="Digite seu nome..."
-            value={value}
-            onChange={onChange}
-            required
-          />
-        </>
-      );
-
-    const ClientCpfInput = ({ value, onChange }) => (
-        <>
-            <Title htmlFor="cpf">CPF do Comprador:</Title>
-            <InputMask
-                mask="999.999.999-99"
-                id="cpf"
-                data-test="client-cpf"
-                value={value}
-                type="text"
-                placeholder="Digite seu CPF..."
-                onChange={onChange}
-                required
-            />
-        </>
-    );
-
-    const BookSeatButton = ({ onClick }) => (
-        <button data-test="book-seat-btn" onClick={onClick}>
-            Reservar Assento(s)
-        </button>
-    );
+  
 
     useEffect(() => {
         const require = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idFilme}/seats`)
@@ -118,9 +84,9 @@ export default function SeatsPage({ filmId, setUserData, ingressos, setIngressos
 
 
 
-    const setarReserva = () => {
+    const setarReserva = (e) => {
         const url = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
-
+        e.preventDefault()
         userReserve.ids = [...seatId]
         userReserve.name = nome
         userReserve.cpf = CPF
@@ -166,7 +132,7 @@ export default function SeatsPage({ filmId, setUserData, ingressos, setIngressos
                     })}
                 </SeatsContainer>
 
-
+               
 
                 <CaptionContainer>
                     {items.map(item => (
@@ -179,9 +145,37 @@ export default function SeatsPage({ filmId, setUserData, ingressos, setIngressos
 
                 <FormContainer>
                     <form onSubmit={setarReserva}>
-                        <ClientNameInput value={nome} onChange={e => setNome(e.target.value)} />
-                        <ClientCpfInput value={CPF} onChange={e => setCPF(e.target.value)} />
-                        <BookSeatButton onClick={() => setarReserva()} />
+                        <Title htmlFor="name">Nome do Comprador: </Title>
+                        <input
+                            id="name"
+                            data-test="client-name"
+                            type="text"
+                            key="nome"
+                            placeholder="Digite seu nome..."
+                            value={nome}
+                            onChange={info => {
+                                removeAccents(info.target.value.replace(/[0-9]/g, ''));
+                                setNome(info.target.value)
+                            }}
+                            required
+                        />
+
+                        <Title htmlFor="cpf">CPF do Comprador:</Title>
+
+                        <InputMask
+                            mask="999.999.999-99"
+                            id="cpf"
+                            data-test="client-cpf"
+                            value={CPF}
+                            type="text"
+                            key="cpf"
+                            placeholder="Digite seu CPF..."
+                            onChange={e => setCPF(e.target.value)}
+                            required
+                        />
+
+                        <button data-test="book-seat-btn" onClick={() => setarReserva()} >Reservar Assento(s)</button>
+
                     </form>
                 </FormContainer>
 
