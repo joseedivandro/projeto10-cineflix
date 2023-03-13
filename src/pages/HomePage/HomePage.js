@@ -69,18 +69,22 @@ const PageContainer = styled.div`
     padding-top: 70px;
 `
 const ListContainer = styled.div`
-    width: 330px;
+    max-width: 330px;
     display: flex;
     flex-wrap: wrap;
+    justify-content:space-between;
     flex-direction: row;
     padding: 10px;
+ 
 `
 const MovieContainer = styled.div`
     width: 145px;
     height: 210px;
+   
     box-shadow: 0px 2px 4px 2px #0000001A;
     border-radius: 3px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 10px;

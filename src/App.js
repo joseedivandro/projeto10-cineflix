@@ -1,78 +1,66 @@
-import { useState } from "react"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
 import styled from "styled-components"
 import HomePage from "./pages/HomePage/HomePage"
 import SeatsPage from "./pages/SeatsPage/SeatsPage"
 import SessionsPage from "./pages/SessionsPage/SessionsPage"
 import SuccessPage from "./pages/SuccessPage/SuccessPage"
+import { useState } from "react"
 
+import { BrowserRouter ,Route, Routes, Link} from "react-router-dom"
 
 export default function App() {
-
-    const [sessao, setSessao] = useState("")
-    const [sessaoSeat, setSessaoSeat] = useState([])
-    const [buyerCPF, setBuyerCPF] = useState("");
-    const [order, setOrder] = useState();
-    const [idFilme, setIdFilme] = useState(false);
-    const [filmId, setFilmId] = useState("")
-    const [filmes, setFilmes] = useState([]);
-    const [sessionLink, setSessionLink] = useState("")
+    const [filmId , setFilmId] = useState ("")
+    const [filmes, setFilmes] = useState ([]);
+    const [sessionLink, setSessionLink]= useState("")
     const [sessionId, setSessionId] = useState("")
-    const [filmeSessao, setFilmeSessao] = useState({ nomeFilme: "", data: "", hora: "" })
-    const [userData, setUserData] = useState({ name: "", cpf: "" })
-    const [ingressos, setIngressos] = useState([])
-
-
-
+    const [filmeSessao , setFilmeSessao]= useState({nomeFilme:"", data:"", hora:""})
+    const [userData, setUserData] = useState({ name:"", cpf:""})
+    const [ingressos , setIngressos] = useState([])
+   
 
     return (
-        <>
+        <BrowserRouter>
+          <Link to="/">
+          <NavContainer>CINEFLEX</NavContainer>
+          </Link>
+        
+          
+            <Routes>
+           
+            <Route path ="/" element= { <HomePage />}/>
+            <Route path="/sessoes/:idFilme" element={<SessionsPage 
+                  setSessionId= {setSessionId}
+                  filmeSessao={filmeSessao}
+                  setFilmeSessao={setFilmeSessao}
+                 
+
+            />} />
 
 
-            <BrowserRouter>
-                <NavContainer>CINEFLEX</NavContainer>
-                <Routes>
-                    <Route path="/" element={< HomePage />} />
-                    <Route path="/sessoes/:idFilme" element={<SessionsPage
-                        setIdFilme={setIdFilme}
-                        sessao={sessao}
-                        setSessao={setSessao}
-                    />} />
-                    <Route path="/assentos/:idSessao"
-                        element={<SeatsPage
-                            sessaoSeat={sessaoSeat}
-                            setSessaoSeat={setSessaoSeat}
-                            setBuyerCPF={setBuyerCPF}
-                            setOrder={setOrder}
-                            idFilme={idFilme}
-                            filmeSessao={filmeSessao}
-                            userData={userData}
-                            ingressos={ingressos}
-                            setFilmeSessao={setFilmeSessao}
-                            setUserData={setUserData}
-                            setIngressos={setIngressos}
-                            
+            <Route path="/assentos/:idFilme" element= {
+                <SeatsPage
+                   
+                    filmId ={filmId} 
+                    userData={userData}
+                    setUserData={setUserData}
+                    ingressos={ingressos}
+                    setIngressos ={setIngressos}
+                   
+    
+                /> 
+             }/>
+           
+            <Route path="/sucesso" element={<SuccessPage 
+                 filmeSessao={filmeSessao}
+                 userData={userData}
+                 ingressos={ingressos}
+                 setFilmeSessao={setFilmeSessao}
+                 setUserData ={setUserData}
+                 setIngressos = {setIngressos}
+            />} />
 
-
-
-                        />} />
-
-                    <Route path="/sucesso" element={<SuccessPage
-                        order={order}
-                        sessionId={sessionId}
-                        setFilmeSessao={setFilmeSessao}
-                        filmeSessao={filmeSessao}
-                        setIngressos={setIngressos}
-                        ingressos={ingressos}
-                        setUserData ={setUserData}
-                        userData={userData}
-
-                    />} />
-                </Routes>
-            </BrowserRouter>
-
-
-        </>
+            </Routes>
+            
+        </BrowserRouter>
     )
 }
 

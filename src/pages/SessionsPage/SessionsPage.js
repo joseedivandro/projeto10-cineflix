@@ -1,89 +1,73 @@
 import styled from "styled-components";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({ setIdFilme }) {
-  const [sessao, setSessao] = useState([]);
-  const [movie, setMovie] = useState(false);
-  const [days, setDays] = useState(false);
-
+export default function SessionsPage({ setSessionId, setFilmeSessao }) {
   const { idFilme } = useParams();
-
-  const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
-  const promise = axios.get(url);
-  let filmeSelecionado = false;
-
+  const [sessao, setSessao] = useState();
 
   useEffect(() => {
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
+    axios
+      .get(url)
+      .then((res) => {
+        setSessao(res.data);
+        console.log(sessao);
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+      });
+  }, [idFilme]);
 
-
-    promise.then(({ data }) => {
-
-      setIdFilme(idFilme);
-      setMovie(data);
-      setDays(data.days);
-    });
-
-    promise.catch((err) => {
-      console.log(err);
-    });
-  }, []);
-
-
-
-  if (movie.days !== undefined) {
-    filmeSelecionado = true;
-  } else {
-    filmeSelecionado = false;
+  if (sessao === undefined) {
+    return <div>Carregando...</div>;
   }
 
-
+  function armazenaDados(id, time, date) {
+    setSessionId(id);
+    setFilmeSessao({
+      nomeFilme: sessao.title,
+      data: date,
+      hora: time,
+    });
+  }
 
   return (
+    <PageContainer>
+      <h2>Selecione o horário</h2>
+      {sessao.days.map((session) => (
+        <SessionContainer key={session.id}>
+          <p data-test="movie-day">
+            {session.weekday} - {session.date}
+          </p>
+          <DivContainerButton>
+            {session.showtimes.map((time) => (
+              <ButtonsContainer key={time.id}>
+                <Link to={`/assentos/${time.id}`}>
+                  <button
+                    data-test="showtime"
+                    onClick={() => armazenaDados(time.id, time.name, session.date)}
+                  >
+                    {time.name}
+                  </button>
+                </Link>
+              </ButtonsContainer>
+            ))}
+          </DivContainerButton>
+        </SessionContainer>
+      ))}
 
-    <>
-      {filmeSelecionado ? (
-        <PageContainer>
-          <p>Selecione o horário</p>
-        <>
-
-          <div>
-
-            {days.map(({ id, weekday, date, showtimes }) => {
-              return (
-                <SessionContainer key={id} data-test="movie-day">
-                  {`${weekday} - ${date}`}
-                  <ButtonsContainer>
-                    {showtimes.map(({ id, name }) => {
-                      return (
-                        <Link to={`/assentos/${id}`} key={id}>
-                          <button data-test="showtime">{name}</button>
-                        </Link>
-                      )
-                    })}
-                  </ButtonsContainer>
-                </SessionContainer>
-
-              )
-            })}
-          </div>
-          </>
-
-          <FooterContainer data-test="footer">
-            <div>
-              <img src={movie.posterURL} alt="poster" />
-            </div>
-            <div>
-              <p>{movie.title}</p>
-            </div>
-          </FooterContainer>
-        </PageContainer>
-      ) : (
-        <div><p> A CARREGAR</p></div>
-      )}
-    </>
-  )
+      <FooterContainer data-test="footer">
+        <div>
+          <img src={sessao.posterURL} alt={sessao.title} />
+        </div>
+        <div>
+          <p>{sessao.title}</p>
+        </div>
+      </FooterContainer>
+    </PageContainer>
+  );
 }
 
 const PageContainer = styled.div`
@@ -96,7 +80,6 @@ const PageContainer = styled.div`
     margin-top: 30px;
     padding-bottom: 120px;
     padding-top: 70px;
-    align-items:center;
     div {
         margin-top: 20px;
     }
@@ -104,16 +87,25 @@ const PageContainer = styled.div`
 const SessionContainer = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    flex-wrap:wrap;
+ 
+    align-items:center;
     font-family: 'Roboto';
     font-size: 20px;
     color: #293845;
     padding: 0 20px;
 `
+const DivContainerButton= styled.div`
+display:flex;
+flex-direction: row;
+justify-content:space-around
+`
 const ButtonsContainer = styled.div`
+    
     display: flex;
     flex-direction: row;
     margin: 20px 0;
+    margin-left: 13px;
     button {
         margin-right: 20px;
     }
@@ -131,7 +123,6 @@ const FooterContainer = styled.div`
     font-size: 20px;
     position: fixed;
     bottom: 0;
-
     div:nth-child(1) {
         box-shadow: 0px 2px 4px 2px #0000001A;
         border-radius: 3px;
@@ -146,7 +137,6 @@ const FooterContainer = styled.div`
             padding: 8px;
         }
     }
-
     div:nth-child(2) {
         display: flex;
         flex-direction: column;
