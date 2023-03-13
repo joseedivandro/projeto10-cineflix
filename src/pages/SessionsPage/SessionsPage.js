@@ -5,7 +5,7 @@ import axios from "axios"
 import { Link , useParams} from "react-router-dom"
 
 
-export default function SessionsPage({setSessionId,filmeSessao, setFilmeSessao}) {
+export default function SessionsPage({setSessionId,infoPagar, setinfoPagar}) {
     const {idFilme} = useParams()
     const [sessionInfos, setSessionInfos] = useState()
     useEffect (()=>{
@@ -30,7 +30,7 @@ export default function SessionsPage({setSessionId,filmeSessao, setFilmeSessao})
     }
     function setarAssentos(id, time, date){
         setSessionId (id)
-        setFilmeSessao({
+        setinfoPagar({
             nomeFilme:sessionInfos.title,
             data:date,
             hora:time

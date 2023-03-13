@@ -13,9 +13,6 @@ export default function HomePage({ filmeId, setFilmeId }) {
 
     useEffect(() => {
 
-
-
-
         promise.then((res) => {
             setListaDeFilmes(res.data)
             console.log(res.data)

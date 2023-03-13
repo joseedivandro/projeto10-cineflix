@@ -9,11 +9,9 @@ import { BrowserRouter ,Route, Routes, Link} from "react-router-dom"
 
 export default function App() {
     const [filmId , setFilmId] = useState ("")
-    const [filmes, setFilmes] = useState ([]);
-    const [sessionLink, setSessionLink]= useState("")
     const [sessionId, setSessionId] = useState("")
-    const [filmeSessao , setFilmeSessao]= useState({nomeFilme:"", data:"", hora:""})
-    const [userData, setUserData] = useState({ name:"", cpf:""})
+    const [infoPagar, setinfoPagar]= useState({nomeFilme:"", data:"", hora:""})
+    const [userDados, setuserDados] = useState({ name:"", cpf:""})
     const [ingressos , setIngressos] = useState([])
    
 
@@ -29,8 +27,8 @@ export default function App() {
             <Route path ="/" element= { <HomePage />}/>
             <Route path="/sessoes/:idFilme" element={<SessionsPage 
                   setSessionId= {setSessionId}
-                  filmeSessao={filmeSessao}
-                  setFilmeSessao={setFilmeSessao}
+                  infoPagar={infoPagar}
+                  setinfoPagar={setinfoPagar}
                  
 
             />} />
@@ -40,8 +38,8 @@ export default function App() {
                 <SeatsPage
                    
                     filmId ={filmId} 
-                    userData={userData}
-                    setUserData={setUserData}
+                    userDados={userDados}
+                    setuserDados={setuserDados}
                     ingressos={ingressos}
                     setIngressos ={setIngressos}
                    
@@ -50,11 +48,11 @@ export default function App() {
              }/>
            
             <Route path="/sucesso" element={<SuccessPage 
-                 filmeSessao={filmeSessao}
-                 userData={userData}
+                 infoPagar={infoPagar}
+                 userDados={userDados}
                  ingressos={ingressos}
-                 setFilmeSessao={setFilmeSessao}
-                 setUserData ={setUserData}
+                 setinfoPagar={setinfoPagar}
+                 setuserDados ={setuserDados}
                  setIngressos = {setIngressos}
             />} />
 

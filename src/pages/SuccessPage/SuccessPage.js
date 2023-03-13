@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
-export default function SuccessPage({filmeSessao,userData, ingressos, setFilmeSessao, setUserData, setIngressos}) {
+export default function SuccessPage({infoPagar,userDados, ingressos, setinfoPagar, setuserDados, setIngressos}) {
     const navigate = useNavigate()
     function returnHome (){
-        setFilmeSessao ({nomeFilme:"", data:"", hora:""})
+        setinfoPagar({nomeFilme:"", data:"", hora:""})
         setIngressos([])
-        setUserData({ name:"", cpf:""})
+        setuserDados({ name:"", cpf:""})
         navigate ("/")
     }
     return (
@@ -15,8 +15,8 @@ export default function SuccessPage({filmeSessao,userData, ingressos, setFilmeSe
 
             <TextContainer data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
-                <p>{filmeSessao.nomeFilme}</p>
-                <p>{filmeSessao.data} - {filmeSessao.hora}</p>
+                <p>{infoPagar.nomeFilme}</p>
+                <p>{infoPagar.data} - {infoPagar.hora}</p>
             </TextContainer>
 
             <TextContainer data-test="seats-info">
@@ -31,8 +31,8 @@ export default function SuccessPage({filmeSessao,userData, ingressos, setFilmeSe
             <TextContainer data-test="client-info" >
                 <div >
                     <strong><p>Comprador</p></strong>
-                    <p>{`Nome: ${userData.name}`}</p>
-                    <p>{`CPF: ${userData.cpf}`}</p>
+                    <p>{`Nome: ${userDados.name}`}</p>
+                    <p>{`CPF: ${userDados.cpf}`}</p>
                 </div>
             
             </TextContainer>
