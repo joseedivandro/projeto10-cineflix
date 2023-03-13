@@ -1,73 +1,89 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import styled from "styled-components"
+import { useEffect } from "react"
+import { useState } from "react"
+import axios from "axios"
+import { Link , useParams} from "react-router-dom"
 
-export default function SessionsPage({ setSessionId, setFilmeSessao }) {
-  const { idFilme } = useParams();
-  const [sessao, setSessao] = useState();
 
-  useEffect(() => {
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
-    axios
-      .get(url)
-      .then((res) => {
-        setSessao(res.data);
-        console.log(sessao);
-      })
-      .catch((err) => {
-        console.log(err.response.data.error);
-      });
-  }, [idFilme]);
+export default function SessionsPage({setSessionId,filmeSessao, setFilmeSessao}) {
+    const {idFilme} = useParams()
+    const [sessionInfos, setSessionInfos] = useState()
+    useEffect (()=>{
+        const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`
+        const require = axios.get(url)  
+        
+       
+            require.then (res => {
+               
+                setSessionInfos (res.data)   
+                console.log(sessionInfos)
+                
+            })
+    
+            require.catch (err => {
+                console.log (err.response.data.error)
+            })
+       
+    }, [])
+    if(sessionInfos === undefined){
+        return <div>Carregando...</div>
+    }
+    function setarAssentos(id, time, date){
+        setSessionId (id)
+        setFilmeSessao({
+            nomeFilme:sessionInfos.title,
+            data:date,
+            hora:time
+        })
+       
+    }
 
-  if (sessao === undefined) {
-    return <div>Carregando...</div>;
-  }
-
-  function armazenaDados(id, time, date) {
-    setSessionId(id);
-    setFilmeSessao({
-      nomeFilme: sessao.title,
-      data: date,
-      hora: time,
-    });
-  }
-
-  return (
-    <PageContainer>
-      <h2>Selecione o horário</h2>
-      {sessao.days.map((session) => (
-        <SessionContainer key={session.id}>
-          <p data-test="movie-day">
-            {session.weekday} - {session.date}
-          </p>
-          <DivContainerButton>
-            {session.showtimes.map((time) => (
-              <ButtonsContainer key={time.id}>
-                <Link to={`/assentos/${time.id}`}>
-                  <button
-                    data-test="showtime"
-                    onClick={() => armazenaDados(time.id, time.name, session.date)}
-                  >
-                    {time.name}
-                  </button>
-                </Link>
-              </ButtonsContainer>
-            ))}
-          </DivContainerButton>
-        </SessionContainer>
-      ))}
-
-      <FooterContainer data-test="footer">
-        <div>
-          <img src={sessao.posterURL} alt={sessao.title} />
-        </div>
-        <div>
-          <p>{sessao.title}</p>
-        </div>
-      </FooterContainer>
-    </PageContainer>
-  );
+   
+    if(sessionInfos !== undefined){
+        return (
+        
+            <PageContainer>
+                Selecione o horário
+                
+                    {
+                        sessionInfos.days.map(session => <SessionContainer key={session.id} data-test="movie-day"> {
+                            <>
+                                <p>{session.weekday} - {session.date}</p>
+                                <DivContainerButton>
+                                    {session.showtimes.map(time => <ButtonsContainer>{
+                                    <>
+                                    <Link to={`/assentos/${time.id}`}>
+                                        <button data-test="showtime" key={time.id}onClick={()=>setarAssentos(time.id,time.name, session.date)}>{time.name}</button>
+                                    </Link>
+                            
+                                    </>
+    
+                                }  </ButtonsContainer> )}
+    
+                            </DivContainerButton>
+                            </>
+                        }</SessionContainer>)
+                    }     
+    
+                    
+                                
+                
+                    <FooterContainer data-test="footer">
+                    <div>
+                        <img src={sessionInfos.posterURL} alt={sessionInfos.title} />
+                    </div>
+                    <div>
+                        <p>{sessionInfos.title}</p>
+                    </div>
+                </FooterContainer>
+                
+    
+                
+                
+            </PageContainer>
+        )
+    }    
+    
 }
 
 const PageContainer = styled.div`
