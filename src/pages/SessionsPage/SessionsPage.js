@@ -3,8 +3,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({setIdFilme }) {
+export default function SessionsPage({ setIdFilme }) {
   const [sessao, setSessao] = useState([]);
+  const [movie, setMovie] = useState(false);
+  const [days, setDays] = useState(false);
+
   const { idFilme } = useParams();
 
   const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
@@ -15,9 +18,11 @@ export default function SessionsPage({setIdFilme }) {
   useEffect(() => {
 
 
-    promise.then((res) => {
-      setSessao(res.data);
+    promise.then(({ data }) => {
+
       setIdFilme(idFilme);
+      setMovie(data);
+      setDays(data.days);
     });
 
     promise.catch((err) => {
@@ -27,7 +32,7 @@ export default function SessionsPage({setIdFilme }) {
 
 
 
-  if (sessao.days !== undefined) {
+  if (movie.days !== undefined) {
     filmeSelecionado = true;
   } else {
     filmeSelecionado = false;
@@ -41,27 +46,36 @@ export default function SessionsPage({setIdFilme }) {
       {filmeSelecionado ? (
         <PageContainer>
           <p>Selecione o horário</p>
-          <SessionContainer data-test="movie-day">
-            {sessao.days && sessao.days.map((time, index) => (
-              <div key={index}>
-                {time.weekday} - {time.date}
-                {time.showtimes.map((showtimes) => (
-                  <ButtonsContainer key={showtimes.id}>
-                    <Link to={`/assentos/${showtimes.id}`}>
-                      <button data-test="showtime">{showtimes.name}</button>
-                    </Link>
+        <>
+
+          <div>
+
+            {days.map(({ id, weekday, date, showtimes }) => {
+              return (
+                <SessionContainer key={id} data-test="movie-day">
+                  {`${weekday} - ${date}`}
+                  <ButtonsContainer>
+                    {showtimes.map(({ id, name }) => {
+                      return (
+                        <Link to={`/assentos/${id}`} key={id}>
+                          <button data-test="showtime">{name}</button>
+                        </Link>
+                      )
+                    })}
                   </ButtonsContainer>
-                ))}
-              </div>
-            ))}
-          </SessionContainer>
+                </SessionContainer>
+
+              )
+            })}
+          </div>
+          </>
 
           <FooterContainer data-test="footer">
             <div>
-              <img src={sessao.posterURL} alt="poster" />
+              <img src={movie.posterURL} alt="poster" />
             </div>
             <div>
-              <p>{sessao.title}</p>
+              <p>{movie.title}</p>
             </div>
           </FooterContainer>
         </PageContainer>
