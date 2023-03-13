@@ -20,15 +20,12 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
     useEffect(() => {
-        axios.get(url)
-            .then(res => {
-                setSessaoSeat(res.data)
-                console.log(res.data)
-
+        axios
+            .get(url)
+            .then(({ data }) => {
+                setSessaoSeat(data)
             })
-            .catch(err => {
-                console.error(err)
-            })
+            .catch(() => alert("erro ao fazer requisição, sinto muito, tente novamente mais tarde"));
 
 
     }, [])
