@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import styled from "styled-components"
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import SeatReserver from "../FormSubmit/FormSubmit";
+import removeAccents from 'remove-accents';
+import Inputmask from "inputmask";
 
 
-export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
+
+export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder, filmId, setUserData}) {
 
     const { idSessao } = useParams()
     let filmeSelecionado = false;
@@ -14,8 +16,46 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
     const [selectedNumber, selectedSeatsNumber] = useState([]);
     const [compradores, setCompradores] = useState([]);
     const navigate = useNavigate();
+    const [seatInfos, setaSeatInfos] = useState()
+    const { idFilme } = useParams()
+    const [nome, setNome] = useState("")
+    const [CPF, setCPF] = useState("")
+    const [seatId, setSeatId] = useState([]);
+    const [seats, setSeats] = useState([{}])
+    const [avaliableSeat, setAvaliableSeat] = useState(false)
+    const [selecionado, setSelecionado] = useState(false)
 
 
+    
+
+    let userReserve = {
+        ids: [],
+        name: "",
+        cpf: ""
+    }
+
+    useEffect(() => {
+        const require = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`)
+
+        if (filmId !== undefined) {
+            require.then(res => {
+                setaSeatInfos(res.data)
+                console.log(res.data)
+                setSeats(
+                    res.data.seats.map(({ id, name, isAvailable }) => {
+                        return { id, name, isAvailable, selected: false }
+                    })   
+                )    
+            })  
+            require.catch(err => {
+                console.log(err.response.data.error)
+            })
+        }
+
+
+
+
+    }, [])
 
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
 
@@ -38,6 +78,8 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
     }
 
 
+   
+    
 
     function statusDaCor(status) {
 
@@ -89,14 +131,28 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
     }
 
 
-    function submitSeats(e) {
-        e.preventDefault();
-        if (SelecionaAssentoNumero.length === 0 || selectedNumber.length === 0) {
-            alert("Selecione pelo menos um assento");
-            return;
-        }
-        finishOrder()
-    }
+
+    const setarReserva = () => {
+        const url = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
+        
+        userReserve.ids = [...seatId]
+        userReserve.name = nome
+        userReserve.cpf = CPF
+        setUserData({
+            name: nome,
+            cpf: CPF
+        })
+
+        const promise = axios.post(url , userReserve)
+            promise.then(res => 
+                setCPF(""),
+                setNome(""),
+                navigate ("/sucesso")
+            )
+            promise.catch(err=> alert(err.response.data.mensagem));
+
+
+    };
 
     return (
 
@@ -136,32 +192,41 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
 
                     </CaptionContainer>
 
-                    <FormContainer onSubmit={submitSeats}>
-                        {selectedNumber.length < 1 ?
-                            <SeatReserver
-                                seat={selectedNumber[0]}
-                                compradores={compradores}
-                                setCompradores={setCompradores}
-                                SelecionaAssentoNumero={SelecionaAssentoNumero}
-                                selectedNumber={selectedNumber}
-                            />
-                            :
-                            selectedNumber.map((seat) => {
-                                return (
-                                    <SeatReserver key={seat}
-                                        seat={seat}
-                                        compradores={compradores}
-                                        setCompradores={setCompradores}
-                                        SelecionaAssentoNumero={SelecionaAssentoNumero}
-                                        selectedNumber={selectedNumber}
-                                    />
-                                )
-                            })
+                    <FormContainer>
+                 <form onSubmit={setarReserva}>
+                    <Title htmlFor="name">Nome do Comprador: </Title>
+                    <input
+                     id="name"
+                     data-test="client-name" 
+                     type="text" 
+                     key="nome" 
+                     placeholder="Digite seu nome..." 
+                     value={nome}
+                     onChange={e=>{ 
+                         removeAccents(e.target.value.replace(/[0-9]/g, ''));
+                          setNome(e.target.value)
+                        }} 
+                     required
+                     />
 
-                        }
-                        <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
-                    </FormContainer>
-
+                   <Title htmlFor="cpf">CPF do Comprador:</Title> 
+                        
+                   <input
+                    mask="999.999.999-99" 
+                    id="cpf" 
+                    data-test="client-cpf" 
+                    value={CPF}
+                    type="text" 
+                    key="cpf" 
+                    placeholder="Digite seu CPF..." 
+                    onChange={e=>setCPF(e.target.value)} 
+                    required
+                    />
+                   
+                        <button data-test="book-seat-btn" onClick={() => setarReserva()} >Reservar Assento(s)</button>
+                  
+                 </form>
+                </FormContainer>
                     <FooterContainer data-test="footer">
                         <div>
                             <img src={sessaoSeat.movie?.posterURL} alt="poster" />
@@ -180,6 +245,11 @@ export default function SeatsPage({ sessaoSeat, setSessaoSeat, setOrder }) {
         </>
     )
 }
+
+const Title = styled.label`
+     margin-bottom: 5px;
+    font-size: 22px;
+`
 
 const PageContainer = styled.div`
     display: flex;
@@ -213,6 +283,12 @@ const FormContainer = styled.div`
         align-self: center;
     }
     input {
+        width: calc(100vw - 60px);
+    }
+    Inputmask{
+        width: calc(100vw - 60px);
+    }
+    InputStringMask{
         width: calc(100vw - 60px);
     }
 `

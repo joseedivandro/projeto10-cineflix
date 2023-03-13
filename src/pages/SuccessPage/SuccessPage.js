@@ -2,54 +2,56 @@ import styled from "styled-components"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 
 
-export default function SuccessPage({ order}) {
-
-    const [success, setSuccess] = useState(false);
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`;
-    useEffect(() => {
-        axios
-            .post(url, order?.reserved) // adiciona optional chaining para a propriedade "reserved"
-            .then(() => setSuccess(true))
-            .catch(() => setSuccess(false));
-
-        
-    }, [])
-
+export default function SuccessPage({ filmeSessao, userData, ingressos, setFilmeSessao, setUserData, setIngressos }) {
+    const navigate = useNavigate()
+    function returnHome() {
+        setFilmeSessao({ nomeFilme: "", data: "", hora: "" })
+        setIngressos([])
+        setUserData({ name: "", cpf: "" })
+        navigate("/")
+    }
     return (
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>
 
             <TextContainer data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
-                <p>{order?.title}</p> // adiciona optional chaining para a propriedade "title"
-                <p>{`${order?.sessionData} - ${order?.sessionTime}`}</p> // adiciona optional chaining para as propriedades "sessionData" e "sessionTime"
+                {filmeSessao && (
+                    <>
+                        <p>{filmeSessao.nomeFilme}</p>
+                        <p>{filmeSessao.data} - {filmeSessao.hora}</p>
+                    </>
+                )}
             </TextContainer>
 
             <TextContainer data-test="seats-info">
                 <strong><p>Ingressos</p></strong>
-                {order?.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)} // adiciona optional chaining para a propriedade "seatsNumber"
+                {Array.isArray(ingressos) && ingressos.length > 0 ? (
+                    ingressos.map((ingresso, index) => <p key={index}>{`Assento ${ingresso}`}</p>)
+                ) : (
+                    <p>Nenhum ingresso selecionado</p>
+                )}
             </TextContainer>
 
-            <TextContainer>
-                {order?.reserved?.compradores.map(({ nome, cpf }) => { // adiciona optional chaining para a propriedade "reserved"
-
-                    return (
-                        <div data-test="client-info" key={cpf}>
-                            <p>Nome: {nome}</p>
-                            <p>CPF: {cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}</p>
-                        </div>
-                    )
-                })}
+            <TextContainer data-test="client-info">
+                <div>
+                    <strong><p>Comprador</p></strong>
+                    {userData && userData.name && (
+                        <>
+                            <p>{`Nome: ${userData.name}`}</p>
+                            <p>{`CPF: ${userData.cpf}`}</p>
+                        </>
+                    )}
+                </div>
             </TextContainer>
 
+            <button data-test="go-home-btn" onClick={() => returnHome()}>Voltar para Home</button>
 
 
-            <Link to="/">
-                <button data-test="go-home-btn">Voltar para Home</button>
-            </Link>
         </PageContainer>
     )
 }

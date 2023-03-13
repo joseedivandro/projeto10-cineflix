@@ -13,9 +13,17 @@ export default function App() {
     const [sessaoSeat, setSessaoSeat] = useState([])
     const [buyerCPF, setBuyerCPF] = useState("");
     const [order, setOrder] = useState();
-    const [sessionId, setSessionId] = useState(false);
     const [idFilme, setIdFilme] = useState(false);
-    
+    const [filmId, setFilmId] = useState("")
+    const [filmes, setFilmes] = useState([]);
+    const [sessionLink, setSessionLink] = useState("")
+    const [sessionId, setSessionId] = useState("")
+    const [filmeSessao, setFilmeSessao] = useState({ nomeFilme: "", data: "", hora: "" })
+    const [userData, setUserData] = useState({ name: "", cpf: "" })
+    const [ingressos, setIngressos] = useState([])
+
+
+
 
     return (
         <>
@@ -26,7 +34,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={< HomePage />} />
                     <Route path="/sessoes/:idFilme" element={<SessionsPage
-                    setIdFilme = {setIdFilme}
+                        setIdFilme={setIdFilme}
                         sessao={sessao}
                         setSessao={setSessao}
                     />} />
@@ -35,16 +43,29 @@ export default function App() {
                             sessaoSeat={sessaoSeat}
                             setSessaoSeat={setSessaoSeat}
                             setBuyerCPF={setBuyerCPF}
-                            setOrder = {setOrder}
-                            idFilme = {idFilme}
+                            setOrder={setOrder}
+                            idFilme={idFilme}
+                            filmeSessao={filmeSessao}
+                            userData={userData}
+                            ingressos={ingressos}
+                            setFilmeSessao={setFilmeSessao}
+                            setUserData={setUserData}
+                            setIngressos={setIngressos}
+                            
 
 
 
                         />} />
 
                     <Route path="/sucesso" element={<SuccessPage
-                        order = {order} 
-                        sessionId = {sessionId}
+                        order={order}
+                        sessionId={sessionId}
+                        setFilmeSessao={setFilmeSessao}
+                        filmeSessao={filmeSessao}
+                        setIngressos={setIngressos}
+                        ingressos={ingressos}
+                        setUserData ={setUserData}
+                        userData={userData}
 
                     />} />
                 </Routes>
